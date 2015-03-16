@@ -12,8 +12,14 @@ class PostView extends Backbone.View
 
    el: $ ".post.item"   
 
-   events:
-      "click .play-track": "play"
+   events: () ->
+      isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)
+      eventsHash = {}
+      if isMobile
+         _.extend eventsHash, "click .mobile-play": "play"
+      else
+         _.extend eventsHash, "click .overlay": "play"
+      
 
    initialize: ->
       @model.view = @
@@ -24,11 +30,13 @@ class PostView extends Backbone.View
 
    play: ->
       console.log "clicked play #{@model.get("title")}"
+      $('.body-container').addClass('player-live')
       @song_ready = new $.Deferred()
       $.ajax @model.get("url"),
          type: "GET"
          success: (data, textStatus, jqXHR) =>
             body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>"
+            $('.full-post-container').html($(body).find('.full-post').html())
             @model.set youtube_url: $(body).find(".youtube-url").text()
             @song_ready.resolve()
          error: (jqXHR, textStatus, errorThrown) =>
@@ -59,7 +67,7 @@ class BlogView extends Backbone.View
       _.each $(".post.item"), (el) ->
          post_model = new Post
             title: $(el).find("h3.post-title").text()
-            url:  $(el).find(".play-track").data("url")
+            url:  $(el).find(".item-play").data("url")
          Tuneiversal.Collections.Posts.add post_model
          post_view = new PostView model: post_model, el: el
 
@@ -82,8 +90,8 @@ class PlayerView extends Backbone.View
       that = @
       window.playerReady.done () =>
          Tuneiversal.yPlayer = new YT.Player "youtube-embed",
-            height: "200"
-            width: "200"
+            height: "00"
+            width: "00"
             videoId: "M7lc1UVf-VE"
             events:
                "onReady": that.player_ready

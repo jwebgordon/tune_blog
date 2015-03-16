@@ -44,8 +44,19 @@
 
     PostView.prototype.el = $(".post.item");
 
-    PostView.prototype.events = {
-      "click .play-track": "play"
+    PostView.prototype.events = function() {
+      var eventsHash, isMobile;
+      isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+      eventsHash = {};
+      if (isMobile) {
+        return _.extend(eventsHash, {
+          "click .mobile-play": "play"
+        });
+      } else {
+        return _.extend(eventsHash, {
+          "click .overlay": "play"
+        });
+      }
     };
 
     PostView.prototype.initialize = function() {
@@ -59,6 +70,7 @@
 
     PostView.prototype.play = function() {
       console.log("clicked play " + (this.model.get("title")));
+      $('.body-container').addClass('player-live');
       this.song_ready = new $.Deferred();
       $.ajax(this.model.get("url"), {
         type: "GET",
@@ -66,6 +78,7 @@
           return function(data, textStatus, jqXHR) {
             var body;
             body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>";
+            $('.full-post-container').html($(body).find('.full-post').html());
             _this.model.set({
               youtube_url: $(body).find(".youtube-url").text()
             });
@@ -110,7 +123,7 @@
         var post_model, post_view;
         post_model = new Post({
           title: $(el).find("h3.post-title").text(),
-          url: $(el).find(".play-track").data("url")
+          url: $(el).find(".item-play").data("url")
         });
         Tuneiversal.Collections.Posts.add(post_model);
         return post_view = new PostView({
@@ -152,8 +165,8 @@
       return window.playerReady.done((function(_this) {
         return function() {
           return Tuneiversal.yPlayer = new YT.Player("youtube-embed", {
-            height: "200",
-            width: "200",
+            height: "00",
+            width: "00",
             videoId: "M7lc1UVf-VE",
             events: {
               "onReady": that.player_ready,

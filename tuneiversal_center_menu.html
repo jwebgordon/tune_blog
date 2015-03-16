@@ -21,7 +21,7 @@
 <div class="youtube-url">{% text "youtube" label='Youtube URL', value="URL HERE", export_to_template_context=False, overrideable=True, no_wrapper=True %}</div>
 <div class="top-outer">
   <div class="row-fluid top-container" data-0="background-position: 50% 0px" data-400="background-position: 50% -400px;">
-    <div class="span12 top"  data-0="-webkit-transform: translateY(0px);" data-400="-webkit-transform: translateY(-100px);">
+    <div class="span12 top"  data-0="-webkit-transform: translateY(0px);" data-400="-webkit-transform: translateY(0px);">
       <h1 >Tuneiversal</h1>
       <p>Discover new music here</p>
     </div>
@@ -34,11 +34,21 @@
                 <div class="menu-left menu">
                     {% menu "left_menu" label="Left Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_left" %}
                 </div>
+                <div class="mobile-menu mobile-menu-icon"><span class="glyphicon glyphicon-align-justify"></span></div>
+                <div class="mobile-menu mobile-menu-name"><h1>Tuneiversal</h1></div>
                 <div class="menu-icon">
                     {% linked_image "menu_icon" label="Menu Icon", alt="Menu Icon", height=53, link="", src="http://cdn2.hubspot.net/hub/160982/file-23053666-jpg/images/astro.jpg", width=53 %}
                 </div>
                 <div class="menu-right menu">
                     {% menu "right_menu" label="Right Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_right" %}
+                </div>
+                <div class="mobile-menu mobile-menu-content">
+                    <ul>
+                        <li><a href="http://www.tuneiversal.com">Home</a></li>
+                        <li><a href="http://www.tuneiversal.com/playlists">Playlists</a></li>
+                        <li><a href="http://app.tuneiversal.com/">My Tuneiversal</a></li>
+                        <li><a href="http://www.tuneiversal.com/about">About</a></li>
+                    </ul>
                 </div>
             </div>
       </div>
@@ -152,9 +162,9 @@
 <!--
   [hubspot-metadata]
 {
-    "category": "blog", 
-    "creatable": true, 
-    "path": "custom/blog/new/tuneiversal_center_menu.html"
+"category": "blog", 
+"creatable": true, 
+"path": "custom/blog/custom/tuneiversal_center_menu.html"
 }
 [end-hubspot-metadata]
 -->
