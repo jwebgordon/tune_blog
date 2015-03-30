@@ -2,6 +2,7 @@ window.Tuneiversal =
    Models: {}
    Collections: {}
    Views: {}
+   isMobile: navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)
 
 class Post extends Backbone.Model
 
@@ -13,10 +14,9 @@ class PostView extends Backbone.View
    el: $ ".post.item"   
 
    events: () ->
-      isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)
       eventsHash = {}
-      if isMobile
-         _.extend eventsHash, "click .mobile-play": "play"
+      if Tuneiversal.isMobile
+         _.extend eventsHash, "click .mobile-play": "mobile_play"
       else
          _.extend eventsHash, "click .overlay": "play"
       
@@ -44,6 +44,20 @@ class PostView extends Backbone.View
       @song_ready.done () =>
          Tuneiversal.yPlayer.loadVideoById(@parse_url(@model.get("youtube_url")))
 
+   mobile_play: ->
+      @song_ready = new $.Deferred()
+      $.ajax @model.get("url"),
+         type: "GET"
+         success: (data, textStatus, jqXHR) =>
+            body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>"
+            $('.full-post-container').html($(body).find('.full-post').html())
+            @model.set youtube_url: $(body).find(".youtube-url").text()
+            @song_ready.resolve()
+         error: (jqXHR, textStatus, errorThrown) =>
+            console.log("error")
+      @song_ready.done () =>
+
+         Tuneiversal.yPlayer.cueVideoById(@parse_url(@model.get("youtube_url")))   
 
 
 class BlogView extends Backbone.View
@@ -83,19 +97,45 @@ class PlayerView extends Backbone.View
       "click .play-button": "play_pause"
       "click .stop-button": "stop"
       "click .next-button": "next_track"
+      "click .youtube-close": "close_modal"
+      "click .youtube-show": "show_modal"
 
    cue: []
 
    initialize: ->
       that = @
+      @isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)
       window.playerReady.done () =>
-         Tuneiversal.yPlayer = new YT.Player "youtube-embed",
-            height: "00"
-            width: "00"
-            videoId: "M7lc1UVf-VE"
-            events:
-               "onReady": that.player_ready
-               "onStateChange": that.player_state_change
+         if @isMobile
+            @firstSongLoaded = new $.Deferred()
+            $.ajax Tuneiversal.Collections.Posts.first().get('url'),
+               type: 'GET'
+               success: (data, textStatus, jqXHR) =>
+                  body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>"
+                  Tuneiversal.Collections.Posts.first().set youtube_url: $(body).find(".youtube-url").text()
+                  @firstSongLoaded.resolve()
+            @firstSongLoaded.done () =>
+               Tuneiversal.yPlayer = new YT.Player "youtube-embed-mobile",
+                  height: "200"
+                  width: "100%"
+                  videoId: Tuneiversal.Collections.Posts.first().get('youtube_url').split('v=')[1].split('&')[0]
+                  events:
+                     "onReady": that.player_ready
+                     "onStateChange": that.player_state_change
+         else
+            Tuneiversal.yPlayer = new YT.Player "youtube-embed",
+               height: "00"
+               width: "00"
+               videoId: "M7lc1UVf-VE"
+               events:
+                  "onReady": that.player_ready
+                  "onStateChange": that.player_state_change
+   show_modal: ->
+      $('.youtube-container-mobile').show()
+      $('.youtube-show').hide()
+   close_modal: ->
+      $('.youtube-container-mobile').hide()
+      $('.youtube-show').show()
 
    player_ready: ->
       console.log "player_ready"
@@ -106,6 +146,9 @@ class PlayerView extends Backbone.View
          @show_player()
          $(".play-button").css("background-image", "url('http://www.tuneiversal.com/hs-fs/hub/160982/file-630196930-png/images/player_controls/pause.png')")
          @inter_id = setInterval @update_progress, 100
+      else if current_state == 5
+         @show_player()
+         @show_modal()
       else
          $(".play-button").css("background-image", "url('http://www.tuneiversal.com/hs-fs/hub/160982/file-625113038-png/images/player_controls/play.png')")
          clearInterval @inter_id

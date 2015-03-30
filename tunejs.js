@@ -8,7 +8,8 @@
   window.Tuneiversal = {
     Models: {},
     Collections: {},
-    Views: {}
+    Views: {},
+    isMobile: navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/)
   };
 
   Post = (function(_super) {
@@ -45,12 +46,11 @@
     PostView.prototype.el = $(".post.item");
 
     PostView.prototype.events = function() {
-      var eventsHash, isMobile;
-      isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+      var eventsHash;
       eventsHash = {};
-      if (isMobile) {
+      if (Tuneiversal.isMobile) {
         return _.extend(eventsHash, {
-          "click .mobile-play": "play"
+          "click .mobile-play": "mobile_play"
         });
       } else {
         return _.extend(eventsHash, {
@@ -94,6 +94,34 @@
       return this.song_ready.done((function(_this) {
         return function() {
           return Tuneiversal.yPlayer.loadVideoById(_this.parse_url(_this.model.get("youtube_url")));
+        };
+      })(this));
+    };
+
+    PostView.prototype.mobile_play = function() {
+      this.song_ready = new $.Deferred();
+      $.ajax(this.model.get("url"), {
+        type: "GET",
+        success: (function(_this) {
+          return function(data, textStatus, jqXHR) {
+            var body;
+            body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>";
+            $('.full-post-container').html($(body).find('.full-post').html());
+            _this.model.set({
+              youtube_url: $(body).find(".youtube-url").text()
+            });
+            return _this.song_ready.resolve();
+          };
+        })(this),
+        error: (function(_this) {
+          return function(jqXHR, textStatus, errorThrown) {
+            return console.log("error");
+          };
+        })(this)
+      });
+      return this.song_ready.done((function(_this) {
+        return function() {
+          return Tuneiversal.yPlayer.cueVideoById(_this.parse_url(_this.model.get("youtube_url")));
         };
       })(this));
     };
@@ -154,7 +182,9 @@
     PlayerView.prototype.events = {
       "click .play-button": "play_pause",
       "click .stop-button": "stop",
-      "click .next-button": "next_track"
+      "click .next-button": "next_track",
+      "click .youtube-close": "close_modal",
+      "click .youtube-show": "show_modal"
     };
 
     PlayerView.prototype.cue = [];
@@ -162,19 +192,56 @@
     PlayerView.prototype.initialize = function() {
       var that;
       that = this;
+      this.isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
       return window.playerReady.done((function(_this) {
         return function() {
-          return Tuneiversal.yPlayer = new YT.Player("youtube-embed", {
-            height: "00",
-            width: "00",
-            videoId: "M7lc1UVf-VE",
-            events: {
-              "onReady": that.player_ready,
-              "onStateChange": that.player_state_change
-            }
-          });
+          if (_this.isMobile) {
+            _this.firstSongLoaded = new $.Deferred();
+            $.ajax(Tuneiversal.Collections.Posts.first().get('url'), {
+              type: 'GET',
+              success: function(data, textStatus, jqXHR) {
+                var body;
+                body = "<div id='body-mock'>" + data.replace(/^[\s\S]*<body.*?>|<\/body>[\s\S]*$/g, "") + "</div>";
+                Tuneiversal.Collections.Posts.first().set({
+                  youtube_url: $(body).find(".youtube-url").text()
+                });
+                return _this.firstSongLoaded.resolve();
+              }
+            });
+            return _this.firstSongLoaded.done(function() {
+              return Tuneiversal.yPlayer = new YT.Player("youtube-embed-mobile", {
+                height: "200",
+                width: "100%",
+                videoId: Tuneiversal.Collections.Posts.first().get('youtube_url').split('v=')[1].split('&')[0],
+                events: {
+                  "onReady": that.player_ready,
+                  "onStateChange": that.player_state_change
+                }
+              });
+            });
+          } else {
+            return Tuneiversal.yPlayer = new YT.Player("youtube-embed", {
+              height: "00",
+              width: "00",
+              videoId: "M7lc1UVf-VE",
+              events: {
+                "onReady": that.player_ready,
+                "onStateChange": that.player_state_change
+              }
+            });
+          }
         };
       })(this));
+    };
+
+    PlayerView.prototype.show_modal = function() {
+      $('.youtube-container-mobile').show();
+      return $('.youtube-show').hide();
+    };
+
+    PlayerView.prototype.close_modal = function() {
+      $('.youtube-container-mobile').hide();
+      return $('.youtube-show').show();
     };
 
     PlayerView.prototype.player_ready = function() {
@@ -188,6 +255,9 @@
         this.show_player();
         $(".play-button").css("background-image", "url('http://www.tuneiversal.com/hs-fs/hub/160982/file-630196930-png/images/player_controls/pause.png')");
         return this.inter_id = setInterval(this.update_progress, 100);
+      } else if (current_state === 5) {
+        this.show_player();
+        return this.show_modal();
       } else {
         $(".play-button").css("background-image", "url('http://www.tuneiversal.com/hs-fs/hub/160982/file-625113038-png/images/player_controls/play.png')");
         return clearInterval(this.inter_id);

@@ -18,78 +18,88 @@
 </head>
 
 <body class=" {{ builtin_body_classes }}" style="">
-<div class="youtube-url">{% text "youtube" label='Youtube URL', value="URL HERE", export_to_template_context=False, overrideable=True, no_wrapper=True %}</div>
-<div class="top-outer">
-  <div class="row-fluid top-container" data-0="background-position: 50% 0px" data-400="background-position: 50% -400px;">
-    <div class="span12 top"  data-0="-webkit-transform: translateY(0px);" data-400="-webkit-transform: translateY(0px);">
-      <h1 >Tuneiversal</h1>
-      <p>Discover new music here</p>
-    </div>
+    <div class="youtube-url">{% text "youtube" label='Youtube URL', value="URL HERE", export_to_template_context=False, overrideable=True, no_wrapper=True %}</div>
+    <div class="top-outer">
+      <div class="row-fluid top-container" data-0="background-position: 50% 0px" data-400="background-position: 50% -400px;">
+        <div class="span12 top"  data-0="-webkit-transform: translateY(0px);" data-400="-webkit-transform: translateY(-100px);">
+          <h1 >Tuneiversal</h1>
+          <p>Discover new music here</p>
+      </div>
   </div>
 </div>
 <div class="static-menu-outer">
   <div class="row-fluid static-menu-container" data-0="position: relative;" data-5-top="position: fixed; top: 0px; left: 0px;">
       <div class="span12 static-menu">
-            <div class="span12 center-menu">
-                <div class="menu-left menu">
-                    {% menu "left_menu" label="Left Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_left" %}
-                </div>
-                <div class="mobile-menu mobile-menu-icon"><span class="glyphicon glyphicon-align-justify"></span></div>
-                <div class="mobile-menu mobile-menu-name"><h1>Tuneiversal</h1></div>
-                <div class="menu-icon">
-                    {% linked_image "menu_icon" label="Menu Icon", alt="Menu Icon", height=53, link="", src="http://cdn2.hubspot.net/hub/160982/file-23053666-jpg/images/astro.jpg", width=53 %}
-                </div>
-                <div class="menu-right menu">
-                    {% menu "right_menu" label="Right Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_right" %}
-                </div>
-                <div class="mobile-menu mobile-menu-content">
-                    <ul>
-                        <li><a href="http://www.tuneiversal.com">Home</a></li>
-                        <li><a href="http://www.tuneiversal.com/playlists">Playlists</a></li>
-                        <li><a href="http://app.tuneiversal.com/">My Tuneiversal</a></li>
-                        <li><a href="http://www.tuneiversal.com/about">About</a></li>
-                    </ul>
-                </div>
+        <div class="span12 center-menu">
+            <div class="menu-left menu">
+                {% menu "left_menu" label="Left Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_left" %}
             </div>
-      </div>
-  </div>
+            <div class="mobile-menu mobile-menu-icon"><span class="glyphicon glyphicon-align-justify"></span></div>
+            <div class="mobile-menu mobile-menu-name"><h1>Tuneiversal</h1></div>
+            <div class="menu-icon">
+                {% linked_image "menu_icon" label="Menu Icon", alt="Menu Icon", height=53, link="", src="http://cdn2.hubspot.net/hub/160982/file-23053666-jpg/images/astro.jpg", width=53 %}
+            </div>
+            <div class="menu-right menu">
+                {% menu "right_menu" label="Right Menu", flow="horizontal", flyouts="true", max_levels=4, root_key=None, root_type="site_root", site_map_name="T_right" %}
+            </div>
+            <div class="mobile-menu mobile-menu-content">
+                <ul>
+                    <li><a href="http://www.tuneiversal.com">Home</a></li>
+                    <li><a href="http://www.tuneiversal.com/playlists">Playlists</a></li>
+                    <li><a href="http://app.tuneiversal.com/">My Tuneiversal</a></li>
+                    <li><a href="http://www.tuneiversal.com/about">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
 <div class="body-container container-fluid" data-stellar-background-ratio="0.5">
     <div class="posts-wrapper js-masonry" data-masonry-options='{ "itemSelector": ".item", "columnWidth": ".item" }'>
         {% if is_listing_view %}
-            {% for content in contents %}
-            <div class="post item">
-                <div class="item-inner">
-                    <div class="title-wrapper">
-                        <h3 class="post-title">{{ content.name }}</h3>    
-                    </div>  
-                    <div class="author-wrapper">
-                        <h6 class="author">By <a class="author-link" href="{{ group.absolute_url }}/author/{{ content.blog_post_author.slug }}">{{ content.blog_post_author.full_name }}</a> - {{ content.publish_date_local_time|datetimeformat('%b %d %Y') }}</h6>
-                    </div>
-                    <div class="content-wrapper">
-                        <p>{{ content.post_list_content|safe }}</p>    
-                    </div>
-                    <div class="play-track btn btn-play" data-url="{{ content.absolute_url }}"><span class="glyphicon glyphicon-play"></span>Play It</div>
+        {% for content in contents %}
+        <div class="post item">
+            <div class="item-inner">
+                <div class="title-wrapper">
+                    <h3 class="post-title">{{ content.name }}</h3>    
+                </div>  
+                <div class="author-wrapper">
+                    <h6 class="author">{{ content.blog_post_author.full_name }}</a> - {{ content.publish_date_local_time|datetimeformat('%b %d %Y') }}</h6>
+                </div>
+                <div class="content-wrapper">
+                    <p>{{ content.post_list_content|safe }}</p>    
+                </div>
+
+            </div>
+            <div class="overlay">
+                <span class="item-play" data-url="{{ content.absolute_url}}"><img src="http://www.tuneiversal.com/hs-fs/hub/160982/file-625113038-png/images/player_controls/play.png"></span>
+            </div>
+            <div class="mobile mobile-play">
+                <a class="mobile-play-button"><img src="http://www.tuneiversal.com/hs-fs/hub/160982/file-1963893804-png/images/Media-Play-48.png"></a>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+            <div class="full-post">
+                <div class="headline">
+                    <h2>{{ content.name }}</h2>
+                    <p>{{ content.blog_post_author.full_name }} <small>{{ content.publish_date_local_time|datetimeformat('%b %d %Y') }}</small></p>
+                </div>
+                <div class="main-content">
+                    {{ content.post_body }}
                 </div>
             </div>
-            {% endfor %}
-    </div>
-    <div class="blog-pagination">
-        {% if last_page_num %}
-        <a class="previous-posts-link" href="{{ blog_page_link(last_page_num) }}">Previous</a>
-        {% endif %}
-        {% if next_page_num %}
-        <a class="next-posts-link" href="{{ blog_page_link(next_page_num) }}">Next</a>
         {% endif %}
     </div>
-        {% endif %}
+    <div class="full-post-container"></div>
+
 
     <div class="row-fluid below-posts">
         <div class="span4 widget-span widget-type-rich_text about-blog">
             {% widget_block rich_text "about_this_blog" has_rows=False, label='About this blog', overrideable=False, __key='0', params_str="overrideable=False, label='About this blog' ", is_row=False %} 
             {% widget_attribute "html" %}
-            <p>Tuneiversal is your place to find awesome music, new and old. The artists and genres I'm listening to change on a day-to-day basis, and I bet I'm not alone in that. One day it's some Of Monsters and Men at work, the next it's some Lil Wayne (but definitely nothing since Tha Carter 3, amiright?). I can't guarantee you'll like everything here, but there's definitely something for everyone.</p>
+            <p>Tuneiversal is all about posting awesome new music, no matter what genre. Wiz Khalifa has a new song out? Come find it here. Mumford and Sons just released a new album? Come read about is and listen to some songs here. Some old Beethoven B-Sides were just discovered? That you might not find here. But short of that, Tunieversal will post it!</p>
             <p>Come check out all the artists you love, and hopefully find some new favorites too!</p>
             {% end_widget_attribute %} 
             {% end_widget_block %}
@@ -97,7 +107,7 @@
         <div class="span4 widget-span widget-type-rich_text social">
             {% widget_block rich_text "social_links" has_rows=False, label='Social Links', overrideable=False, __key='0', params_str="overrideable=False, label='Social Links' ", is_row=False %} 
             {% widget_attribute "html" %}
-            <h3>Follow Us!</h3>
+            <h2>Follow Us!</h2>
             <div class="social-icons">
                 <a href="http://wwww.facebook.com/tuneiversal" target="_blank"><img src="http://cdn2.hubspot.net/hub/160982/file-731419725-png/images/social/32-facebook.png"></a>
                 <a href="http://www.twitter.com/tuneiversal" target="_blank"><img src="http://cdn2.hubspot.net/hub/160982/file-731419730-png/images/social/32-twitter.png"></a>
@@ -107,64 +117,64 @@
             {% end_widget_block %}
         </div>
         <div class="span4 widget-span widget-type-blog_subscribe blog-subscribe">
-            {% blog_subscribe "blog_subscription" has_rows=False, title='New Song Notifications', response_message='Thanks for Subscribing!', label='Blog Email Subscription', overrideable=False, __key='0', params_str="label='Blog Email Subscription', overrideable=False, response_message='Thanks for Subscribing!', title='Get Tuneiversal Updates' ", is_row=False %}
+            {% blog_subscribe "blog_subscription" has_rows=False, title='Get Tuneiversal Updates', response_message='Thanks for Subscribing!', label='Blog Email Subscription', overrideable=False, __key='0', params_str="label='Blog Email Subscription', overrideable=False, response_message='Thanks for Subscribing!', title='Get Tuneiversal Updates' ", is_row=False %}
         </div>
     </div>
 </div>
-                           
-    <!--end body wrapper -->
 
-    <div class="footer-container-wrapper">
-        <div class="footer-container container-fluid">
+<!--end body wrapper -->
 
-            <div class="row-fluid-wrapper row-depth-1 row-number-1 ">
-                <div class="row-fluid ">
-                    <div class="span12 widget-span widget-type-page_footer " style="" data-widget-type="page_footer" data-x="0" data-w="12">
-                        <div class="cell-wrapper layout-widget-wrapper">
-                            {% page_footer "page_footer" has_rows=False, overrideable=False, __key='0', label='Page Footer', params_str="overrideable=False, label='Page Footer' ", is_row=False %}
-                        </div>
-                        <!--end layout-widget-wrapper -->
+<div class="footer-container-wrapper">
+    <div class="footer-container container-fluid">
+
+        <div class="row-fluid-wrapper row-depth-1 row-number-1 ">
+            <div class="row-fluid ">
+                <div class="span12 widget-span widget-type-page_footer " style="" data-widget-type="page_footer" data-x="0" data-w="12">
+                    <div class="cell-wrapper layout-widget-wrapper">
+                        {% page_footer "page_footer" has_rows=False, overrideable=False, __key='0', label='Page Footer', params_str="overrideable=False, label='Page Footer' ", is_row=False %}
                     </div>
-                    <!--end widget-span -->
+                    <!--end layout-widget-wrapper -->
                 </div>
-                <!--end row-->
+                <!--end widget-span -->
             </div>
-            <!--end row-wrapper -->
+            <!--end row-->
+        </div>
+        <!--end row-wrapper -->
 
-        </div>
-        <!--end footer -->
     </div>
-    <!--end footer wrapper -->
-    <div class="youtube-container">
-        <div id="youtube-embed"></div>
-    </div>
-    
-    <div class="player-container">
-        <div class="tuneiversal-player row-fluid">
-            <div class="play-button control span1"></div>
-            <div class="stop-button control span1"></div>
-            <div class="next-button control span1"></div>
-            <div class="progress span9 track-progress">
-                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-                    <span class="sr-only">60% Complete</span>
-                  </div>
-                </div>
+    <!--end footer -->
+</div>
+<!--end footer wrapper -->
+<div class="youtube-container">
+    <div id="youtube-embed"></div>
+</div>
+<div class="youtube-show"><span class="plus">[+]</span> Show Video</div>
+<div class="player-container">
+    <div class="tuneiversal-player row-fluid">
+        <div class="play-button control span1"></div>
+        <div class="stop-button control span1"></div>
+        <div class="next-button control span1"></div>
+        <div class="progress span9 track-progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                <span class="sr-only">60% Complete</span>
             </div>
         </div>
     </div>
-    {{ standard_footer_includes }}
-    <!-- Generated by the HubSpot Template Builder - template version 1.03 -->
+    <div class="youtube-container-mobile">
+        <div class="youtube-close">X</div>
+        <div id="youtube-embed-mobile"></div>
+    </div>
+    <div class="youtube-show"><span class="plus">[+]</span> Show Video</div>
+</div>
+</div>
+{{ standard_footer_includes }}
+<!-- Generated by the HubSpot Template Builder - template version 1.03 -->
 </body>
 
 </html>
 
 
+
 <!--
-  [hubspot-metadata]
-{
-"category": "blog", 
-"creatable": true, 
-"path": "custom/blog/custom/tuneiversal_center_menu.html"
-}
-[end-hubspot-metadata]
+  
 -->
